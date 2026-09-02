@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>大屏 rem 适配（视口仿真回归夹具）</title>
+<style>
+  /* 后台大屏最常见的适配写法：根字号由「屏幕宽」算出，而不是视口宽。
+     所以采集上下文必须连 window.screen 一起仿真 —— 只钉视口的话，
+     物理屏幕多大页面就按多大排版，量出来的每个 px 都带一个跟实现无关的缩放系数
+     （2133px 的 Mac 屏上整页放大 11.1%，此后报告里每个几何数字都是错的）。
+     直接在浏览器里打开这个文件，能看到它在你屏幕上确实不是 1000x200。 */
+  body { margin: 0; }
+  #box { width: 10rem; height: 2rem; background: #2563eb; }
+  #probe { font-size: 1rem; color: #111827; }
+</style>
+</head>
+<body>
+  <div id="box"></div>
+  <div id="probe"></div>
+  <script>
+    document.documentElement.style.fontSize = screen.width / 19.2 + "px";
+    document.getElementById("probe").textContent = screen.width + "x" + screen.height;
+  </script>
+</body>
+</html>

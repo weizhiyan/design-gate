@@ -1,0 +1,33 @@
+# design-gate 项目验收规范
+# 本文件是自动化验收的"法律"：所有判定基于此处的确定性规则，而非 AI 拍脑袋。
+# 建议提交到仓库根目录，与代码一起演进。
+
+# ── 栅格规范 ────────────────────────────────
+grid: [4, 8]                       # 间距(gap/padding)必须是 4 或 8 的倍数
+gridApply: [gap, padding]
+
+# ── 容差体系 ────────────────────────────────
+tolerances:
+  geometry:      { warn: 2, error: 8 }    # 几何偏差 px：≥2 警告，≥8 错误
+  colorDeltaE:   { warn: 2.3, error: 5 }  # 颜色 CIEDE2000 色差（2.3≈人眼可辨）
+  radiusDelta:   { warn: 1, error: 3 }    # 圆角 px
+  lineHeightDelta: 2                      # 行高 px
+  opacityDelta: 0.02
+
+# ── 设计 Token 合规 ─────────────────────────
+requireTokens: true                # 开启后：实现中的色值必须命中下方 tokens 表，否则判 error（疑似硬编码）
+tokens:
+  primary: "#2563EB"
+  text-strong: "#111827"
+  text-muted: "#6B7280"
+  border-default: "#E5E7EB"
+  surface: "#FFFFFF"
+
+# ── 白名单 / 弹性豁免 ────────────────────────
+# 支持按 selector、设计节点名过滤；命中后降级为 info 并注明理由。
+exemptions:
+  # - selector: ".chart canvas"
+  #   reason: "第三方图表库渲染，不受栅格约束"
+  # - designNodeName: "装饰光斑"
+  #   property: "background-color"
+  #   reason: "渐变装饰色允许自由取值"

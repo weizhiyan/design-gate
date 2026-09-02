@@ -1,0 +1,9 @@
+{
+  "document": {
+    "id": "fixture:1",
+    "name": "fixture",
+    "type": "FRAME",
+    "absoluteBoundingBox": { "x": 0, "y": 0, "width": 320, "height": 240 },
+    "children": []
+  }
+}

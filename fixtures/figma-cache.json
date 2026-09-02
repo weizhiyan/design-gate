@@ -1,0 +1,101 @@
+{
+  "id": "1:2",
+  "name": "PricingCard",
+  "type": "FRAME",
+  "visible": true,
+  "absoluteBoundingBox": { "x": 100, "y": 80, "width": 320, "height": 340 },
+  "fills": [{ "type": "SOLID", "color": { "r": 1, "g": 1, "b": 1, "a": 1 } }],
+  "cornerRadius": 16,
+  "children": [
+    {
+      "id": "1:10",
+      "name": "标题",
+      "type": "TEXT",
+      "characters": "专业版",
+      "absoluteBoundingBox": { "x": 124, "y": 104, "width": 80, "height": 28 },
+      "fills": [{ "type": "SOLID", "color": { "r": 0.0667, "g": 0.0941, "b": 0.1529, "a": 1 } }],
+      "style": { "fontFamily": "PingFang SC", "fontPostScriptName": "PingFangSC-Semibold", "fontWeight": 600, "fontSize": 20 }
+    },
+    {
+      "id": "1:11",
+      "name": "价格",
+      "type": "TEXT",
+      "characters": "¥99 /月",
+      "absoluteBoundingBox": { "x": 124, "y": 144, "width": 140, "height": 40 },
+      "fills": [{ "type": "SOLID", "color": { "r": 0.1451, "g": 0.3882, "b": 0.9216, "a": 1 } }],
+      "style": { "fontFamily": "PingFang SC", "fontPostScriptName": "PingFangSC-Bold", "fontWeight": 700, "fontSize": 32 }
+    },
+    {
+      "id": "1:12",
+      "name": "描述",
+      "type": "TEXT",
+      "characters": "适合5-10人团队使用",
+      "absoluteBoundingBox": { "x": 124, "y": 196, "width": 170, "height": 20 },
+      "fills": [{ "type": "SOLID", "color": { "r": 0.4196, "g": 0.4471, "b": 0.502, "a": 1 } }],
+      "style": { "fontFamily": "PingFang SC", "fontPostScriptName": "PingFangSC-Regular", "fontWeight": 400, "fontSize": 14 }
+    },
+    {
+      "id": "1:13",
+      "name": "Divider",
+      "type": "FRAME",
+      "absoluteBoundingBox": { "x": 124, "y": 228, "width": 272, "height": 1 },
+      "fills": [{ "type": "SOLID", "color": { "r": 0.898, "g": 0.9059, "b": 0.9216, "a": 1 } }]
+    },
+    {
+      "id": "1:14",
+      "name": "FeatureList",
+      "type": "FRAME",
+      "absoluteBoundingBox": { "x": 124, "y": 244, "width": 272, "height": 96 },
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 12,
+      "children": [
+        {
+          "id": "1:15",
+          "name": "功能1",
+          "type": "TEXT",
+          "characters": "✓ 无限项目",
+          "absoluteBoundingBox": { "x": 124, "y": 244, "width": 110, "height": 24 },
+          "fills": [{ "type": "SOLID", "color": { "r": 0.0667, "g": 0.0941, "b": 0.1529, "a": 1 } }],
+          "style": { "fontFamily": "PingFang SC", "fontPostScriptName": "PingFangSC-Regular", "fontWeight": 400, "fontSize": 14 }
+        },
+        {
+          "id": "1:16",
+          "name": "功能2",
+          "type": "TEXT",
+          "characters": "✓ 无限成员",
+          "absoluteBoundingBox": { "x": 124, "y": 280, "width": 110, "height": 24 },
+          "fills": [{ "type": "SOLID", "color": { "r": 0.0667, "g": 0.0941, "b": 0.1529, "a": 1 } }],
+          "style": { "fontFamily": "PingFang SC", "fontPostScriptName": "PingFangSC-Regular", "fontWeight": 400, "fontSize": 14 }
+        },
+        {
+          "id": "1:17",
+          "name": "功能3",
+          "type": "TEXT",
+          "characters": "✓ 优先支持",
+          "absoluteBoundingBox": { "x": 124, "y": 316, "width": 110, "height": 24 },
+          "fills": [{ "type": "SOLID", "color": { "r": 0.0667, "g": 0.0941, "b": 0.1529, "a": 1 } }],
+          "style": { "fontFamily": "PingFang SC", "fontPostScriptName": "PingFangSC-Regular", "fontWeight": 400, "fontSize": 14 }
+        }
+      ]
+    },
+    {
+      "id": "1:18",
+      "name": "BuyButton",
+      "type": "FRAME",
+      "absoluteBoundingBox": { "x": 124, "y": 356, "width": 272, "height": 44 },
+      "fills": [{ "type": "SOLID", "color": { "r": 0.1451, "g": 0.3882, "b": 0.9216, "a": 1 } }],
+      "cornerRadius": 8,
+      "children": [
+        {
+          "id": "1:19",
+          "name": "按钮文案",
+          "type": "TEXT",
+          "characters": "立即购买",
+          "absoluteBoundingBox": { "x": 220, "y": 366, "width": 80, "height": 24 },
+          "fills": [{ "type": "SOLID", "color": { "r": 1, "g": 1, "b": 1, "a": 1 } }],
+          "style": { "fontFamily": "PingFang SC", "fontPostScriptName": "PingFangSC-Medium", "fontWeight": 500, "fontSize": 16 }
+        }
+      ]
+    }
+  ]
+}
