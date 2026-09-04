@@ -394,44 +394,65 @@ function renderHtml(r: VerifyResult): string {
 <meta charset="UTF-8">
 <title>${esc(r.meta.projectName ? `${r.meta.projectName}验收报告` : "design-gate 验收报告")} — ${esc(r.meta.webUrl)}</title>
 <style>
-  :root { color-scheme:light; --line:#e5e7eb; --ink:#1f2937; --sub:#64748b; }
+  :root {
+    color-scheme:light;
+    --line:#deddd6;
+    --line-soft:#ecebe5;
+    --ink:#1c1c1a;
+    --sub:#6d6b64;
+    --paper:#fff;
+    --soft:#f7f7f3;
+    --black:#181816;
+    --cream:#f8eedc;
+  }
   * { box-sizing:border-box; }
   [hidden] { display:none !important; }
   html,body { height:100%; }
-  body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-    background:#f1f5f9; color:var(--ink); display:flex; flex-direction:column; overflow:hidden; }
+  body { margin:0; font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:#f1f5f9; color:var(--ink); display:flex; flex-direction:column; overflow:hidden;
+    font-size:13px; -webkit-font-smoothing:antialiased; }
 
   /* ---------- 顶栏：刻意压成两排 ----------
      第一排 标题+状态+来源链接+计数，第二排 分类筛选+视图开关。顶栏每多一排，
      左边的截图就少一排的高度，而这份报告的主体就是那张图。
      分数环去掉了：门禁结论看「未通过」徽章，差多少看错误/警告数，
      一个 0-100 的分数夹在这两者中间没有新信息，却占掉 44px 的行高。 */
-  header { background:#fff; border-bottom:1px solid var(--line); padding:8px 18px 7px; flex:none; }
-  .hrow { display:flex; align-items:center; gap:10px; }
-  header h1 { font-size:14px; margin:0; font-weight:600; display:flex; align-items:center; gap:8px; min-width:0; }
+  header { background:#fff; border-bottom:1px solid var(--line); padding:13px 24px 12px; flex:none; }
+  .hrow { display:flex; align-items:center; gap:12px; min-width:0; }
+  header h1 { font-size:16px; margin:0; font-weight:700; letter-spacing:0; display:flex; align-items:center; gap:9px; min-width:0; }
   /* 项目名可能很长（60 字上限），让它省略号收尾，别把状态徽章挤扁 */
   header h1 .htitle { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
-  .badge { flex:none; padding:2px 9px; border-radius:999px; color:#fff; font-weight:600; font-size:11.5px; }
+  .badge { flex:none; padding:4px 10px; border-radius:999px; color:#fff; font-weight:700; font-size:11px;
+    letter-spacing:.01em; box-shadow:0 0 0 2px #fff,0 0 0 3px rgba(24,24,22,.12); }
   /* 来源收成一个短链接（全路径在 title 里）；file:// 报告里它也是可点的 */
   .src { flex:none; max-width:30%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-    font-size:11.5px; color:#2563eb; text-decoration:none; }
-  .src:hover { text-decoration:underline; }
-  .hstat { flex:none; color:var(--sub); font-size:11.5px; white-space:nowrap; }
-  .ctrls { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-top:7px; }
-  .fpill { display:inline-flex; align-items:center; gap:5px; font-size:12px; background:#f1f5f9; color:#334155;
-    border:none; border-radius:999px; padding:4px 11px; cursor:pointer; white-space:nowrap; }
-  .fpill:hover { background:#e2e8f0; }
-  .fpill.on { background:#334155; color:#fff; }
+    display:inline-flex; align-items:center; min-height:27px; padding:4px 10px; border:1px solid var(--line);
+    border-radius:999px; background:#fff; color:var(--black); font-size:11px; text-decoration:none; }
+  .src:hover { background:var(--soft); border-color:var(--black); }
+  .hstat { flex:none; color:var(--sub); font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:10.5px; letter-spacing:.01em; white-space:nowrap; }
+  .ctrls { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:12px; padding-top:11px;
+    border-top:1px solid var(--line-soft); }
+  .fpill { display:inline-flex; align-items:center; gap:6px; font-size:12px; background:#fff; color:var(--ink);
+    border:1px solid var(--line); border-radius:999px; padding:6px 11px; cursor:pointer; white-space:nowrap;
+    transition:background-color .16s ease,border-color .16s ease,color .16s ease; }
+  .fpill:hover { background:var(--soft); border-color:var(--black); }
+  .fpill.on { background:var(--black); border-color:var(--black); color:#fff; }
   .fpill b { font-weight:700; opacity:.7; }
   .dot { display:inline-block; width:8px; height:8px; border-radius:50%; }
   .spacer { flex:1; }
-  .tg { display:inline-flex; align-items:center; gap:5px; font-size:12px; color:#475569; cursor:pointer; user-select:none; }
-  .seg { display:inline-flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
-  .mbtn { font-size:12px; background:#fff; color:#334155; border:none; border-left:1px solid var(--line);
-    padding:4px 10px; cursor:pointer; }
-  .mbtn:first-child { border-left:none; }
-  .mbtn.on { background:#334155; color:#fff; }
-  .mbtn:disabled { color:#cbd5e1; background:#f8fafc; cursor:not-allowed; }
+  .tg { display:inline-flex; align-items:center; gap:6px; font-size:11.5px; color:var(--sub); cursor:pointer;
+    user-select:none; white-space:nowrap; }
+  .tg input { accent-color:var(--black); }
+  .seg { display:inline-flex; gap:2px; padding:2px; background:var(--soft); border:1px solid var(--line);
+    border-radius:999px; overflow:hidden; }
+  .mbtn { font-size:11.5px; background:transparent; color:var(--ink); border:none; border-radius:999px;
+    padding:6px 11px; cursor:pointer; white-space:nowrap; transition:background-color .16s ease,color .16s ease; }
+  .mbtn:hover { background:#fff; }
+  .mbtn.on { background:var(--black); color:#fff; }
+  .mbtn:disabled { color:#b9b8b1; background:transparent; cursor:not-allowed; }
+  .fpill:focus-visible,.mbtn:focus-visible,.tg input:focus-visible,.zbtn:focus-visible,
+  .copybtn:focus-visible,.qopt:focus-visible,.item:focus-visible { outline:2px solid var(--black); outline-offset:2px; }
 
   /* ---------- 一屏两栏：左舞台 + 右卡片列表 ---------- */
   /* grid-template-rows 必须显式写 minmax(0,1fr)：默认的 auto 行会被卡片列表撑到内容高度，
@@ -439,12 +460,13 @@ function renderHtml(r: VerifyResult): string {
      右栏宽度用 clamp 钉一个「够读」的档位而不是 fr：卡片是文字列表，再宽也只是让每行更长；
      左栏宽度却直接决定截图的渲染倍率（.stage img{width:100%}），所以剩下的宽度全归左边。 */
   main.layout { flex:1; min-height:0; overflow:hidden; display:grid; grid-template-rows:minmax(0,1fr);
-    grid-template-columns:minmax(0,1fr) clamp(300px,23%,376px); gap:14px; padding:12px 18px 14px; }
-  .left-col { display:flex; flex-direction:column; gap:10px; min-width:0; }
-  .canvas-wrap { background:#fff; border:1px solid var(--line); border-radius:12px; padding:8px;
+    grid-template-columns:minmax(0,1fr) clamp(332px,27%,430px); gap:16px; padding:16px 24px 20px; }
+  .left-col { display:flex; flex-direction:column; gap:12px; min-width:0; }
+  .canvas-wrap { background:#fff; border:1px solid var(--line); border-radius:16px; padding:10px;
+    box-shadow:0 5px 18px rgba(24,24,22,.045);
     flex:1; min-height:0; display:flex; flex-direction:column; }
-  .compare { position:relative; flex:1; min-height:0; overflow:auto; border-radius:8px; user-select:none;
-    line-height:0; background:repeating-conic-gradient(#f1f5f9 0% 25%,#fff 0% 50%) 50%/18px 18px; }
+  .compare { position:relative; flex:1; min-height:0; overflow:auto; border:1px solid #f1f1ec; border-radius:10px;
+    user-select:none; line-height:0; background:#f7f7f3; }
   .stage { position:relative; line-height:0; }
   .stage img.layer { width:100%; display:block; }
   .design-layer { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
@@ -454,30 +476,31 @@ function renderHtml(r: VerifyResult): string {
   .divider::after { content:"⇄"; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
     width:26px; height:26px; border-radius:50%; background:#fff; color:#334155; font-size:13px;
     display:flex; align-items:center; justify-content:center; box-shadow:0 1px 6px rgba(15,23,42,.3); }
-  .under { display:flex; align-items:center; gap:12px; padding:7px 3px 0; flex:none; }
+  .under { display:flex; align-items:center; gap:12px; padding:10px 3px 1px; flex:none; }
   input.slider { flex:1; accent-color:#334155; }
-  .legend { color:#94a3b8; font-size:11px; white-space:nowrap; }
-  .noimg { flex:1; font-size:11.5px; color:#b45309; }
+  .legend { color:var(--sub); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:10px;
+    letter-spacing:.02em; white-space:nowrap; }
+  .noimg { flex:1; font-size:11px; color:#825500; background:var(--cream); border-radius:999px; padding:5px 10px; }
   /* 缩放条挂在滑块那一排里，不额外占高度。百分比是「截图 CSS 像素 : 屏幕像素」，
      所以 100% 就是 1:1 原始尺寸 —— 报告是拿来量偏差的，倍率必须有确定含义，
      不能是「相对适应宽度的百分比」那种随窗口漂移的数。 */
   .zoombar { flex:none; display:inline-flex; align-items:center; gap:3px; }
-  .zbtn { width:22px; height:22px; padding:0; border:1px solid var(--line); background:#fff; color:#334155;
-    border-radius:6px; font-size:13px; line-height:1; cursor:pointer; }
-  .zbtn:hover { background:#f1f5f9; }
-  .zbtn.wide { width:auto; padding:0 7px; font-size:11px; }
+  .zbtn { width:28px; height:28px; padding:0; border:1px solid var(--line); background:#fff; color:var(--black);
+    border-radius:50%; font-size:14px; line-height:1; cursor:pointer; transition:background-color .16s ease,border-color .16s ease; }
+  .zbtn:hover { background:#f1f2ef; border-color:var(--line); }
+  .zbtn.wide { width:auto; padding:0 10px; border-radius:999px; font-size:10.5px; }
   #zpct { min-width:42px; text-align:center; font-size:11px; color:var(--sub); cursor:pointer;
     font-variant-numeric:tabular-nums; }
   .compare.pannable { cursor:grab; }
   .compare.panning { cursor:grabbing; }
-  .sizewarn { flex:none; margin-top:5px; font-size:11px; line-height:1.5; color:#b45309;
-    background:#fffbeb; border:1px solid #fde68a; border-radius:6px; padding:4px 8px; }
+  .sizewarn { flex:none; margin-top:6px; font-size:10.5px; line-height:1.5; color:#825500;
+    background:var(--cream); border:1px solid #ead39c; border-radius:999px; padding:5px 10px; }
 
   /* ---------- 标注：红框=错误 橙框=警告，角标压在左上角 ---------- */
   /* 平时只描边不填色：标注是嵌套的（根元素那一框罩住整张图），每层都填 10% 红
      会叠成一片粉，"哪一块有问题"就没了。填色留给聚焦时的那一个。 */
   .anno { position:absolute; z-index:6; pointer-events:none; min-width:12px; min-height:12px;
-    outline:2px solid var(--ac); border-radius:2px;
+    outline:2px solid var(--ac); border-radius:4px;
     transition:opacity .13s ease, background-color .13s ease; }
   .anno[data-sev="error"] { --ac:${SEV_COLOR.error}; --af:${SEV_FILL.error}; }
   .anno[data-sev="warning"] { --ac:${SEV_COLOR.warning}; --af:${SEV_FILL.warning}; }
@@ -498,40 +521,41 @@ function renderHtml(r: VerifyResult): string {
   @keyframes npulse { 50% { box-shadow:0 0 0 9px rgba(37,99,235,.35); } }
 
   /* ---------- 右栏卡片 ---------- */
-  .right-col { display:flex; flex-direction:column; gap:8px; min-height:0; }
-  .rhead { display:flex; align-items:baseline; gap:8px; font-size:11.5px; color:var(--sub); flex:none; }
-  .rhead b { font-size:13px; color:var(--ink); }
-  .right-scroll { flex:1; min-height:0; overflow-y:auto; padding-right:4px;
-    display:flex; flex-direction:column; gap:7px; }
-  .item { background:#fff; border:1px solid var(--line); border-left:3px solid var(--cc); border-radius:10px;
-    padding:8px 11px; cursor:pointer; scroll-margin:12px; }
+  .right-col { display:flex; flex-direction:column; gap:10px; min-height:0; }
+  .rhead { display:flex; align-items:baseline; gap:8px; font-size:10.5px; color:var(--sub); flex:none;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.01em; }
+  .rhead b { font-family:ui-sans-serif,-apple-system,sans-serif; font-size:15px; color:var(--ink); }
+  .right-scroll { flex:1; min-height:0; overflow-y:auto; padding:1px 4px 2px 0;
+    display:flex; flex-direction:column; gap:9px; }
+  .item { background:#fff; border:1px solid var(--line); border-left:4px solid var(--cc); border-radius:12px;
+    padding:11px 13px; cursor:pointer; scroll-margin:12px; transition:border-color .16s ease,box-shadow .16s ease; }
   .item[data-sev="error"] { --cc:${SEV_COLOR.error}; }
   .item[data-sev="warning"] { --cc:${SEV_COLOR.warning}; }
-  .item:hover { box-shadow:0 2px 10px rgba(15,23,42,.07); }
-  .item.focus { box-shadow:0 0 0 2px #2563eb; }
+  .item:hover { border-color:var(--black); box-shadow:0 3px 12px rgba(24,24,22,.08); }
+  .item.focus { box-shadow:0 0 0 2px var(--black); }
   .item-head { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
-  .idx { flex:none; width:20px; height:20px; border-radius:999px; background:var(--cc); color:#fff;
+  .idx { flex:none; width:23px; height:23px; border-radius:999px; background:var(--cc); color:#fff;
     font-size:11px; font-weight:700; font-style:normal; display:flex; align-items:center; justify-content:center; }
   .idx.off { background:#e2e8f0; color:#94a3b8; }
-  .pill { font-size:10.5px; padding:1px 7px; border-radius:999px; font-weight:600; }
+  .pill { font-size:10px; padding:3px 8px; border-radius:999px; font-weight:700; }
   .pill-error { background:#fee2e2; color:#991b1b; }
   .pill-warning { background:#fef3c7; color:#92400e; }
   .pill-info { background:#e2e8f0; color:#475569; }
   .pill-ok { background:#dcfce7; color:#166534; }
-  .loc { font-size:11px; color:#64748b; font-family:ui-monospace,Menlo,monospace;
+  .loc { font-size:10.5px; color:var(--sub); font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%; }
   .mini { margin-left:auto; font-size:10.5px; color:#94a3b8; }
   ul.plain { list-style:none; margin:6px 0 0; padding:0; }
-  ul.plain li { font-size:12.5px; line-height:1.65; color:#334155; padding-left:11px; position:relative; }
+  ul.plain li { font-size:12.5px; line-height:1.62; color:#35342f; padding-left:12px; position:relative; }
   ul.plain li::before { content:""; position:absolute; left:0; top:8px; width:4px; height:4px;
     border-radius:50%; background:var(--cc); }
   ul.caveat li { color:#92400e; }
   ul.caveat li::before { background:#d97706; }
-  details.raw { margin-top:5px; }
-  details.raw summary { font-size:11px; color:#94a3b8; cursor:pointer; }
+  details.raw { margin-top:8px; padding-top:7px; border-top:1px solid var(--line-soft); }
+  details.raw summary { font-size:10.5px; color:var(--sub); cursor:pointer; }
   details.raw summary:hover { color:#2563eb; }
-  .raw-row { display:flex; gap:8px; align-items:baseline; font-size:11.5px; padding:3px 0;
-    font-family:ui-monospace,Menlo,monospace; flex-wrap:wrap; }
+  .raw-row { display:flex; gap:8px; align-items:baseline; font-size:11px; padding:4px 0;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; flex-wrap:wrap; }
   .raw-row i { color:#94a3b8; font-style:normal; margin-right:5px; }
   /* 右栏收窄之后值必须能断行：min-width:0 解开 flex 项的最小内容宽度，
      overflow-wrap:anywhere 兜住 font-family 这种没有断点的长串。 */
@@ -540,22 +564,23 @@ function renderHtml(r: VerifyResult): string {
   .raw-row .va { color:#7f1d1d; background:#fef2f2; padding:0 6px; border-radius:4px; }
   .raw-row .arr { color:#cbd5e1; }
   .raw-row b { color:#b45309; }
-  .loose-head { font-size:11px; color:#94a3b8; padding:8px 2px 1px; border-top:1px dashed var(--line); }
+  .loose-head { font-size:10.5px; color:var(--sub); padding:9px 2px 2px; border-top:1px dashed var(--line); }
   /* ---------- 修复代码块：整体弱化，不跟报告抢注意力 ---------- */
-  .fixbox { flex:none; height:156px; display:flex; flex-direction:column; background:#f8fafc;
-    border:1px solid var(--line); border-radius:10px; padding:8px 11px; }
-  .fixhead { display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--sub); margin-bottom:5px; }
-  .copybtn { margin-left:auto; background:#fff; color:#334155; border:1px solid #d1d5db; border-radius:6px;
-    padding:2px 11px; font-size:11px; cursor:pointer; }
-  .copybtn:hover { background:#f1f5f9; }
-  .fixbox pre { margin:0; overflow:auto; font-size:11px; line-height:1.6; color:#475569;
-    font-family:ui-monospace,Menlo,monospace; }
+  .fixbox { flex:none; height:148px; display:flex; flex-direction:column; background:var(--cream);
+    border:1px solid #eadfca; border-radius:14px; padding:10px 13px; }
+  .fixhead { display:flex; align-items:center; gap:8px; font-size:10.5px; color:#63533a; margin-bottom:7px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .copybtn { margin-left:auto; background:var(--black); color:#fff; border:1px solid var(--black); border-radius:999px;
+    padding:5px 12px; font-size:10.5px; cursor:pointer; }
+  .copybtn:hover { background:#35352f; }
+  .fixbox pre { margin:0; overflow:auto; font-size:10.5px; line-height:1.65; color:#554934;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
 
   /* 待裁决面板：橙色是「悬而未决」，与红=错误、灰=已豁免区分开 */
-  .qbox { flex:none; background:#fff; border:1px solid #fcd34d; border-left:3px solid #f59e0b;
-    border-radius:10px; padding:9px 12px; margin-bottom:9px; }
-  .qhead { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:600; color:#92400e; }
-  .qnote { font-size:11.5px; line-height:1.6; color:var(--sub); margin:5px 0 2px; }
+  .qbox { flex:none; background:#fff3cf; border:1px solid #e7c96e; border-left:4px solid #d08a00;
+    border-radius:14px; padding:11px 13px; margin-bottom:9px; }
+  .qhead { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:#6f4d00; }
+  .qnote { font-size:11.5px; line-height:1.6; color:#6d634e; margin:6px 0 3px; }
   .qcard { border-top:1px solid #f1f5f9; margin-top:7px; padding-top:8px; }
   .qcard[data-done] { opacity:.7; }
   .qt { font-size:12.5px; line-height:1.55; color:var(--ink); }
@@ -563,30 +588,51 @@ function renderHtml(r: VerifyResult): string {
   .qcov { color:var(--sub); font-size:11px; margin-left:6px; white-space:nowrap; }
   .qd { font-size:11.5px; line-height:1.65; color:#475569; margin:4px 0 7px; }
   .qopts { display:flex; flex-wrap:wrap; gap:6px; }
-  .qopt { display:inline-flex; align-items:center; gap:5px; text-align:left; background:#f8fafc;
-    color:#334155; border:1px solid var(--line); border-radius:7px; padding:4px 9px;
+  .qopt { display:inline-flex; align-items:center; gap:5px; text-align:left; background:#fffaf0;
+    color:#554a35; border:1px solid #decf9c; border-radius:999px; padding:5px 10px;
     font-size:11.5px; font-family:inherit; cursor:pointer; }
-  .qopt:hover { background:#f1f5f9; }
-  .qopt.on { background:#334155; color:#fff; border-color:#334155; }
+  .qopt:hover { background:#fff; border-color:#9f7a1c; }
+  .qopt.on { background:var(--black); color:#fff; border-color:var(--black); }
   .qopt i { font-style:normal; font-size:10.5px; opacity:.65; }
 
-  details.dis { background:#fff; border:1px dashed var(--line); border-radius:10px; padding:7px 11px;
+  details.dis { background:#fff; border:1px dashed var(--line); border-radius:12px; padding:9px 12px;
     font-size:11.5px; color:var(--sub); flex:none; }
   details.dis summary { cursor:pointer; }
   .drow { padding:5px 0; border-top:1px solid #f1f5f9; font-size:12px; color:#475569; }
   .drow em { color:#94a3b8; font-style:normal; }
 
-  .tip { position:fixed; z-index:99; display:none; max-width:330px; background:#fff; color:var(--ink);
-    font-size:12.5px; line-height:1.65; padding:8px 11px; border-radius:9px; border:1px solid var(--line);
-    box-shadow:0 8px 24px rgba(15,23,42,.16); pointer-events:none; white-space:pre-line; }
+  .tip { position:fixed; z-index:99; display:none; max-width:330px; background:var(--black); color:#fff;
+    font-size:12px; line-height:1.65; padding:9px 12px; border-radius:10px; border:1px solid var(--black);
+    box-shadow:0 6px 18px rgba(24,24,22,.18); pointer-events:none; white-space:pre-line; }
   .tip::first-line { font-weight:600; }
 
   /* 窄屏放弃一屏，恢复整页滚动 */
   @media (max-width:1080px) {
     body { overflow:auto; }
-    main.layout { grid-template-columns:1fr; grid-template-rows:auto; overflow:visible; }
+    header { padding-left:18px; padding-right:18px; }
+    main.layout { grid-template-columns:1fr; grid-template-rows:auto; overflow:visible; padding:14px 18px 18px; }
     .canvas-wrap { min-height:60vh; }
     .right-scroll { max-height:none; overflow:visible; }
+  }
+  @media (max-width:640px) {
+    header { padding:12px 14px 11px; }
+    .hrow { align-items:flex-start; flex-wrap:wrap; gap:8px; }
+    header h1 { flex:1 1 100%; font-size:15px; }
+    .src { max-width:48%; }
+    .hstat { width:100%; white-space:normal; line-height:1.5; }
+    .ctrls { gap:7px; margin-top:10px; padding-top:10px; }
+    .ctrls > .spacer { display:none; }
+    .tg { order:3; }
+    .seg { order:4; width:100%; }
+    .mbtn { flex:1; }
+    main.layout { padding:10px 12px 14px; gap:10px; }
+    .canvas-wrap { border-radius:13px; padding:7px; min-height:52vh; }
+    .under { flex-wrap:wrap; gap:8px; }
+    .under .slider { flex:1 1 100%; order:0; }
+    .legend { flex:1 1 100%; order:1; }
+    .zoombar { margin-left:auto; order:2; }
+    .noimg { flex:1 1 100%; }
+    .fixbox { height:172px; }
   }
 </style>
 </head>
