@@ -10,6 +10,8 @@
 
 它不是只让 AI “看截图猜问题”。工具会读取 Figma 和网页中的结构化数据，再用固定规则和
 确定性代码计算差异，最后生成一份可以打开、查看、筛选和定位问题的 HTML 验收报告。
+<img width="3002" height="1728" alt="image" src="https://github.com/user-attachments/assets/3e8b241c-ac01-4ec7-a5f9-314beeea70df" />
+
 
 ## 验收流程
 
